@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks Box Project</title>
+</head>
+<body>
+    <!-- Tasks box using DOM -->
+    
+    <h1>Tasks Box</h1>
+
+    <form onsubmit="handleSubmit(event)">
+        <input type="text" name = "title" placeholder="Enter the task">
+    </form>
+
+    <h2>My Tasks - 0</h2>
+
+    <ul>
+
+    </ul>
+
+    <script>
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || []
+        const ulTag = document.querySelector('ul')
+        const h2Tag = document.querySelector('h2')
+
+        const handleSubmit = (e) => {
+            e.preventDefault()
+
+            const task = {
+                id: Number(new Date()),
+                title: e.target.title.value
+            }
+
+            tasks.push(task)
+            localStorage.setItem('tasks', JSON.stringify(tasks))
+            e.target.reset()
+
+            // create list item
+            liGenerator(task)
+        }
+
+        const liGenerator = (task) => {
+            const liTag = document.createElement('li')
+            liTag.textContent = task.title
+            ulTag.appendChild(liTag)
+            h2Tag.textContent = `My Tasks - ${tasks.length}`
+
+            // remove functionalit
+            liRemove(liTag, task)
+        }
+
+        // remove element
+        const liRemove = (liTag, task) => {
+            liTag.addEventListener('click', function() {
+                ulTag.removeChild(liTag)
+
+                const index = tasks.findIndex((ele) => {
+                    return ele.id === task.id
+                })
+
+                tasks.splice(index,1)
+                localStorage.setItem('tasks', JSON.stringify(tasks))
+                h2Tag.textContent = `My Tasks - ${tasks.length}`
+            })
+        }
+        
+        tasks.forEach((task) => {
+            liGenerator(task)
+        })
+    </script>
+</body>
+</html>
